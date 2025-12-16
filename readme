@@ -1,0 +1,10 @@
+sudo apt install php-cli php-mysql mysql-server -y
+sudo service mysql start
+sudo mysql -u root -p
+CREATE DATABASE shop_db;  
+CREATE USER 'admin'@'localhost' IDENTIFIED BY '1234';
+GRANT ALL PRIVILEGES ON shop_db.* TO 'admin'@'localhost';
+FLUSH PRIVILEGES;
+exit;
+mysql -u admin -p shop_db < clean_install.sql
+php -S 0.0.0.0:9000

@@ -7,7 +7,8 @@ require_once 'header.php';
 <div class="mb-4 text-center">
     <?php $cat = $_GET['cat'] ?? null; ?>
     
-    <a href="index.php" class="btn rounded-pill px-4 m-1 <?php echo !$cat ? 'btn-primary' : 'btn-outline-primary'; ?>">
+    <!-- ИЗМЕНЕНО: btn-outline-primary на btn-light-primary -->
+    <a href="index.php" class="btn rounded-pill px-4 m-1 <?php echo !$cat ? 'btn-primary' : 'btn-light-primary'; ?>">
        Все
     </a>
 
@@ -15,8 +16,9 @@ require_once 'header.php';
     $cats = $conn->query("SELECT * FROM categories");
     while($c = $cats->fetch()):
     ?>
+    <!-- ИЗМЕНЕНО: btn-outline-primary на btn-light-primary -->
     <a href="index.php?cat=<?php echo $c['code']; ?>" 
-       class="btn rounded-pill px-4 m-1 <?php echo $cat == $c['code'] ? 'btn-primary' : 'btn-outline-primary'; ?>">
+       class="btn rounded-pill px-4 m-1 <?php echo $cat == $c['code'] ? 'btn-primary' : 'btn-light-primary'; ?>">
        <?php echo $c['name']; ?>
     </a>
     <?php endwhile; ?>

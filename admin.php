@@ -43,6 +43,9 @@ $is_deleted = ($tab === 'deleted') ? 1 : 0;
         <a href="admin_categories.php" class="btn btn-outline-dark px-4 rounded-pill">
             <i class="bi bi-tags"></i> Категории
         </a>
+        <a href="admin_characteristics.php" class="btn btn-outline-dark px-4 rounded-pill">
+            <i class="bi bi-list-check"></i> Характеристики
+        </a>
         <a href="add.php" class="btn btn-primary px-4 rounded-pill">
             <i class="bi bi-plus-lg"></i> Добавить товар
         </a>

@@ -39,11 +39,18 @@ if (!empty($ids_in_cart)) {
         /* === КАРТОЧКИ ТОВАРОВ === */
         .card-custom {
             height: 100%; border: none; border-radius: 16px; background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03); transition: transform 0.2s, box-shadow 0.2s;
-            overflow: hidden; display: flex; flex-direction: column; transform: translateZ(0); -webkit-mask-image: -webkit-radial-gradient(white, black);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex; flex-direction: column; 
+            /* ИЗМЕНЕНО: Убрано свойство overflow: hidden, которое обрезало тень */
         }
-        .card-custom:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.08); }
-        .card-img-wrapper { height: 220px; background: #fff; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .card-custom:hover { transform: translateY(-5px); box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12); }
+        /* ИЗМЕНЕНО: Свойство overflow и радиус перенесены сюда, чтобы обрезать только картинку */
+        .card-img-wrapper { 
+            height: 220px; background: #fff; display: flex; align-items: center; justify-content: center; padding: 20px;
+            overflow: hidden;
+            border-radius: 16px 16px 0 0;
+        }
         .card-img-top { max-height: 100%; max-width: 100%; object-fit: contain; }
         .card-body-custom { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
         .product-title { font-size: 1.1rem; font-weight: 700; color: #212529; text-decoration: none; margin-bottom: 5px; display: block; }
@@ -52,17 +59,106 @@ if (!empty($ids_in_cart)) {
         .card-bottom { margin-top: auto; display: flex; justify-content: space-between; align-items: center; }
         .price-tag { font-size: 1.25rem; font-weight: 800; color: #212529; }
 
-/* === ЧАТ (Для полноэкранного режима) === */
+        /* === Стили для кнопок фильтров === */
+        .btn-light-primary {
+            color: #0d6efd;
+            background-color: rgba(13, 110, 253, 0.1);
+            border-color: transparent;
+        }
+        .btn-light-primary:hover, .btn-light-primary:focus {
+            color: #fff;
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+        
+        /* === CUSTOM SELECT BOX === */
+        .custom-select-wrapper { position: relative; }
+        .custom-select-wrapper select { display: none; }
+        .custom-select {
+            position: relative;
+            cursor: pointer;
+            -webkit-user-select: none; user-select: none;
+            transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+        }
+        .custom-select::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: 1.25rem;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 12px;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+            transition: transform 0.2s ease;
+        }
+        .custom-select-wrapper.is-open .custom-select {
+            border-color: #86b7fe !important;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, .25);
+        }
+        .custom-select-wrapper.is-open .custom-select::after {
+            transform: translateY(-50%) rotate(180deg);
+        }
+        .custom-select-options {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            right: 0;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            z-index: 10;
+            max-height: 265px;
+            overflow-y: auto;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: opacity 0.2s ease, visibility 0s .2s linear, transform 0.2s ease;
+            border: 1px solid #dee2e6;
+            padding: 5px;
+        }
+        .custom-select-wrapper.is-open .custom-select-options {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            transition: opacity 0.2s ease, visibility 0s 0s linear, transform 0.2s ease;
+        }
+        .custom-select-option {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            border-radius: 8px;
+        }
+        .custom-select-option:hover { background-color: #f8f9fa; }
+        .custom-select-option.is-selected {
+            background-color: #0d6efd;
+            font-weight: 500;
+            color: white;
+        }
+        .custom-select-options::-webkit-scrollbar { width: 6px; }
+        .custom-select-options::-webkit-scrollbar-track { background: transparent; margin-top: 5px; margin-bottom: 5px; }
+        .custom-select-options::-webkit-scrollbar-thumb { background-color: #d1d5db; border-radius: 20px; border: 1px solid transparent; background-clip: content-box; }
+        .custom-select-options::-webkit-scrollbar-thumb:hover { background-color: #9ca3af; }
+
+        /* === ЭФФЕКТ НАВЕДЕНИЯ НА ТОВАР В ЗАКАЗЕ === */
+        .order-item-link {
+            transition: background-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .order-item-link:hover {
+            background-color: rgba(13, 110, 253, 0.1) !important;
+            box-shadow: 0 .125rem .25rem rgba(13, 110, 253, 0.25) !important;
+        }
+
+        /* === ЧАТ === */
         .chat-container { 
             background: #fff; 
             border-radius: 1rem; 
             overflow: hidden; 
             display: flex; 
             flex-direction: column; 
-            
-            /* Важно: теперь он занимает 100% высоты родителя */
             height: 100%; 
-            
             border: none; 
             box-shadow: 0 .125rem .25rem rgba(0,0,0,.075); 
         }
@@ -74,117 +170,66 @@ if (!empty($ids_in_cart)) {
         .message-them { align-self: flex-start; background: white; color: #1f2937; border-radius: 20px 20px 20px 4px; border: 1px solid #eaeaea; }
         .message-them .msg-time { color: #9ca3af; font-size: 0.7rem; margin-top: 5px; margin-bottom: -3px; }
         .chat-footer { background: white; padding: 15px 20px; border-top: 1px solid #f0f0f0; }
-/* === КОНТЕЙНЕР === */
-.chat-input-group {
-    background: #fff;
-    border: 2px solid #eef2f6;
-    border-radius: 28px;
-    display: flex;
-    align-items: stretch; /* Растягивание */
-    padding: 4px;
-    min-height: 52px; /* 4px + 44px + 4px */
-    box-sizing: border-box;
-    transition: border-color 0.2s;
-    overflow: hidden; /* Чтобы ничего не торчало */
-}
-
-.chat-input-group:focus-within {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-/* === WRAPPER ДЛЯ ПОЛЯ ВВОДА (ДЛЯ АНИМАЦИИ) === */
-.chat-input-wrapper {
-    flex-grow: 1; /* Занимает все доступное место */
-    display: grid; /* Включаем Grid-магию */
-    min-height: 44px; /* Стартовая высота */
-
-    /* ГЛАВНОЕ: Анимируем не высоту, а размер grid-дорожки. Это работает! */
-    transition: grid-template-rows 0.2s ease-out;
-
-    /* Устанавливаем начальный размер. JS будет его менять. */
-    grid-template-rows: 44px;
-}
-
-/* === ТЕКСТОВОЕ ПОЛЕ === */
-.chat-input {
-    grid-area: 1 / 1 / 2 / 2; /* Растягиваем на всю ячейку грида */
-    width: 100%;
-    
-    background: transparent;
-    border: none;
-    resize: none;
-    outline: none;
-    
-    padding: 12px 16px;
-    font-size: 0.95rem;
-    line-height: 20px;
-    color: #333;
-    box-sizing: border-box;
-    margin: 0;
-
-    /* Скролл появляется внутри поля, а не у wrapper'а */
-    overflow-y: auto;
-}
-
-/* === КРАСИВЫЙ СКРОЛЛБАР (Webkit) === */
-/* Тонкая полоска */
-.chat-input::-webkit-scrollbar {
-    width: 6px; 
-}
-/* Фон скролла прозрачный */
-.chat-input::-webkit-scrollbar-track {
-    background: transparent; 
-    margin-top: 10px;    /* Отступы, чтобы не прилипал к краям */
-    margin-bottom: 10px;
-}
-/* Сама "пилюля" скролла */
-.chat-input::-webkit-scrollbar-thumb {
-    background-color: #d1d5db; /* Светло-серый, ненавязчивый */
-    border-radius: 20px;       /* Закругленный */
-    border: 2px solid transparent; /* Отступ от контента */
-    background-clip: content-box;
-}
-/* При наведении чуть темнее */
-.chat-input::-webkit-scrollbar-thumb:hover {
-    background-color: #9ca3af;
-}
-
-/* === КНОПКА ОТПРАВКИ === */
-.btn-send {
-    width: 48px;
-    height: auto; 
-    flex-shrink: 0;
-    
-    border-radius: 24px; /* Круг/Овал по умолчанию */
-    
-    border: none;
-    background: #ffc107;
-    color: #000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    margin-left: 4px;
-    
-    /* Анимация закругления должна совпадать со скоростью роста поля (0.2s) */
-    transition: background-color 0.2s, border-radius 0.2s ease-out;
-}
-
-/* Изменение углов при расширении */
-.chat-input-group.is-expanded .btn-send {
-    border-radius: 8px 24px 24px 8px; /* Сделал 8px для большей плавности */
-}
-
-.btn-send:hover {
-    background: #ffca2c;
-}
-
-.btn-send i {
-    font-size: 1.2rem;
-    margin-left: -2px;
-    margin-top: 2px;
-}
+        .chat-input-group {
+            background: #fff;
+            border: 2px solid #eef2f6;
+            border-radius: 28px;
+            display: flex;
+            align-items: stretch;
+            padding: 4px;
+            min-height: 52px;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+            overflow: hidden;
+        }
+        .chat-input-group:focus-within {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        .chat-input-wrapper {
+            flex-grow: 1;
+            display: grid;
+            min-height: 44px;
+            transition: grid-template-rows 0.2s ease-out;
+            grid-template-rows: 44px;
+        }
+        .chat-input {
+            grid-area: 1 / 1 / 2 / 2;
+            width: 100%;
+            background: transparent;
+            border: none;
+            resize: none;
+            outline: none;
+            padding: 12px 16px;
+            font-size: 0.95rem;
+            line-height: 20px;
+            color: #333;
+            box-sizing: border-box;
+            margin: 0;
+            overflow-y: auto;
+        }
+        .chat-input::-webkit-scrollbar { width: 6px; }
+        .chat-input::-webkit-scrollbar-track { background: transparent; margin-top: 10px; margin-bottom: 10px; }
+        .chat-input::-webkit-scrollbar-thumb { background-color: #d1d5db; border-radius: 20px; border: 2px solid transparent; background-clip: content-box; }
+        .chat-input::-webkit-scrollbar-thumb:hover { background-color: #9ca3af; }
+        .btn-send {
+            width: 48px;
+            height: auto; 
+            flex-shrink: 0;
+            border-radius: 24px;
+            border: none;
+            background: #ffc107;
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-left: 4px;
+            transition: background-color 0.2s, border-radius 0.2s ease-out;
+        }
+        .chat-input-group.is-expanded .btn-send { border-radius: 8px 24px 24px 8px; }
+        .btn-send:hover { background: #ffca2c; }
+        .btn-send i { font-size: 1.2rem; margin-left: -2px; margin-top: 2px; }
         
         /* === КОРЗИНА === */
         .cart-item { transition: background 0.2s; border-radius: 12px; position: relative; }
@@ -281,7 +326,7 @@ if (!empty($ids_in_cart)) {
                         <?php endif; ?>
                     </div>
 
-                    <a href="cart_action.php?action=remove&id=<?php echo $item['id']; ?>" class="btn btn-sm btn-light text-danger rounded-circle shadow-sm" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                    <a href="cart_action.php?action=remove&id=<?php echo $item['id']; ?>" class="btn btn-sm btn-light text-danger rounded-circle shadow-sm" style="width: 32px; height: 32px; display: flex; align-items-center; justify-content: center;">
                         <i class="bi bi-trash"></i>
                     </a>
                 </div>
@@ -318,4 +363,73 @@ if (!empty($ids_in_cart)) {
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- СКРИПТ ДЛЯ КАСТОМНОГО СЕЛЕКТА -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const wrappers = document.querySelectorAll('.custom-select-wrapper');
+
+    function closeAllSelects(exceptThisOne = null) {
+        wrappers.forEach(wrapper => {
+            if (wrapper !== exceptThisOne) {
+                wrapper.classList.remove('is-open');
+            }
+        });
+    }
+
+    wrappers.forEach(wrapper => {
+        const trigger = wrapper.querySelector('.custom-select');
+        const options = wrapper.querySelectorAll('.custom-select-option');
+        const hiddenSelect = wrapper.querySelector('select');
+        const selectedDisplay = trigger.querySelector('span');
+
+        trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeAllSelects(wrapper);
+            wrapper.classList.toggle('is-open');
+        });
+
+        options.forEach(option => {
+            option.addEventListener('click', () => {
+                selectedDisplay.textContent = option.textContent.trim();
+                hiddenSelect.value = option.dataset.value;
+                hiddenSelect.dispatchEvent(new Event('change')); // Для совместимости
+                options.forEach(opt => opt.classList.remove('is-selected'));
+                option.classList.add('is-selected');
+                wrapper.classList.remove('is-open');
+            });
+        });
+    });
+
+    window.addEventListener('click', () => {
+        closeAllSelects();
+    });
+});
+</script>
+
+<!-- СКРИПТ ДЛЯ ПРЕДПРОСМОТРА ИЗОБРАЖЕНИЙ -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const imageUploadInput = document.getElementById('imageUpload');
+    const imagePreview = document.getElementById('imagePreview');
+    const imagePlaceholder = document.getElementById('imagePlaceholder');
+
+    if (imageUploadInput && imagePreview && imagePlaceholder) {
+        imageUploadInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = (e) => {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                    imagePlaceholder.style.display = 'none';
+                };
+                
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    }
+});
+</script>
+
 <div class="container">

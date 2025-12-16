@@ -6,7 +6,6 @@ if (session_status() === PHP_SESSION_NONE) session_start();
 
 // 1. Проверка авторизации
 if (!isset($_SESSION['user_id'])) {
-    // Запоминаем, куда он хотел попасть, чтобы вернуть после входа (можно доработать login.php)
     header("Location: login.php");
     exit;
 }
@@ -27,44 +26,59 @@ require_once 'header.php';
 ?>
 
 <div class="row justify-content-center mt-4">
-    <div class="col-md-5">
+    <div class="col-md-6">
+        <!-- ИЗМЕНЕНО: Полностью переработанная карточка -->
         <div class="card shadow-sm border-0 rounded-4">
-            <div class="card-header bg-success text-white">
-                <h4 class="mb-0">Оформление заказа</h4>
-            </div>
-            <div class="card-body p-4">
-                <p class="text-muted">Всего товаров: <strong><?php echo count($cartIds); ?></strong></p>
-                <h3 class="mb-4">К оплате: <?php echo number_format($total, 0, '', ' '); ?> ₽</h3>
+            <div class="card-body p-4 p-lg-5">
+                <h2 class="fw-bold mb-3">Оформление заказа</h2>
+                
+                <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded-3 mb-4">
+                    <span class="text-muted">Всего товаров: <strong><?php echo count($cartIds); ?> шт.</strong></span>
+                    <div class="text-end">
+                        <span class="fs-2 fw-bold text-primary"><?php echo number_format($total, 0, '', ' '); ?> ₽</span>
+                    </div>
+                </div>
+
+                <hr class="text-muted opacity-25 mb-4">
 
                 <form action="place_order.php" method="post">
                     <div class="mb-3">
-                        <label class="form-label">Адрес доставки</label>
-                        <textarea name="address" class="form-control" rows="3" required placeholder="Город, улица, дом..."></textarea>
+                        <label class="form-label text-secondary small fw-bold text-uppercase ls-1"><i class="bi bi-geo-alt-fill me-1"></i> Адрес доставки</label>
+                        <textarea name="address" class="form-control form-control-lg bg-light border-0 rounded-3" rows="3" required placeholder="Город, улица, дом, квартира..."></textarea>
                     </div>
                     
                     <div class="mb-4">
-                        <label class="form-label">Телефон</label>
-                        <!-- Добавили id="phone" и maxlength -->
-                        <input type="tel" name="phone" id="phone" class="form-control" required placeholder="+7-999-000-0000" maxlength="16">
-                        <div class="form-text text-muted">Формат: +x-xxx-xxx-xxxx</div>
+                        <label class="form-label text-secondary small fw-bold text-uppercase ls-1"><i class="bi bi-telephone-fill me-1"></i> Телефон</label>
+                        <input type="tel" name="phone" id="phone" class="form-control form-control-lg bg-light border-0 rounded-3" required placeholder="+7 (999) 000-00-00" maxlength="18">
                     </div>
 
-                    <button type="submit" class="btn btn-success w-100 py-2 rounded-pill fs-5">Подтвердить заказ</button>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg w-100 py-3 rounded-pill fw-bold shadow-sm">Подтвердить заказ</button>
+                    </div>
                 </form>
 
-                <!-- СКРИПТ МАСКИ ТЕЛЕФОНА -->
+                <!-- СКРИПТ МАСКИ ТЕЛЕФОНА (обновлен под новый формат) -->
                 <script>
                 document.getElementById('phone').addEventListener('input', function (e) {
-                    let x = e.target.value.replace(/\D/g, '') // Удаляем всё, кроме цифр
-                        .match(/(\d{0,1})(\d{0,3})(\d{0,3})(\d{0,4})/); // Разбиваем на группы
-
-                    if (!x[1]) {
-                        e.target.value = '+'; // Если пусто, ставим плюс
-                        return;
+                    let value = e.target.value.replace(/\D/g, '');
+                    let formattedValue = '+';
+                    
+                    if (value.length > 0) {
+                        formattedValue += value.substring(0,1);
+                        if (value.length > 1) {
+                            formattedValue += ' (' + value.substring(1,4);
+                        }
+                        if (value.length > 4) {
+                            formattedValue += ') ' + value.substring(4,7);
+                        }
+                        if (value.length > 7) {
+                            formattedValue += '-' + value.substring(7,9);
+                        }
+                        if (value.length > 9) {
+                            formattedValue += '-' + value.substring(9,11);
+                        }
                     }
-
-                    // Собираем строку по шаблону +x-xxx-xxx-xxxx
-                    e.target.value = !x[2] ? '+' + x[1] : '+' + x[1] + '-' + x[2] + (x[3] ? '-' + x[3] : '') + (x[4] ? '-' + x[4] : '');
+                    e.target.value = formattedValue;
                 });
                 </script>
             </div>

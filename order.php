@@ -46,7 +46,6 @@ $st = $statusMap[$order['status']] ?? [$order['status'], 'bg-secondary'];
             </div>
 
             <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
-                <!-- ВОТ ЗДЕСЬ: border-bottom + border-light (еле заметная линия) -->
                 <div class="card-header bg-white py-3 border-bottom border-light">
                     <h5 class="mb-0 fw-bold">Детали заказа #<?php echo $order['id']; ?></h5>
                 </div>
@@ -74,15 +73,17 @@ $st = $statusMap[$order['status']] ?? [$order['status'], 'bg-secondary'];
                     <hr class="text-muted opacity-25">
 
                     <h6 class="fw-bold mb-3">Состав заказа</h6>
-                    <div class="list-group list-group-flush border rounded-3 overflow-hidden">
+                    <div class="d-flex flex-column gap-2">
                         <?php foreach($items as $item): ?>
-                        <a href="product.php?id=<?php echo $item['product_id']; ?>" class="list-group-item list-group-item-action d-flex align-items-center p-3">
-                            <img src="<?php echo $item['image'] ?: 'https://placehold.co/50'; ?>" width="50" height="50" style="object-fit: contain; mix-blend-mode: multiply;" class="me-3">
+                        <!-- ИЗМЕНЕНО: Добавлен класс order-item-link -->
+                        <a href="product.php?id=<?php echo $item['product_id']; ?>" class="d-flex align-items-center p-3 bg-light rounded-3 shadow-sm text-decoration-none order-item-link">
+                            <img src="<?php echo $item['image'] ?: 'https://placehold.co/50'; ?>" width="50" height="50" style="object-fit: contain; mix-blend-mode: multiply;" class="me-3 bg-white rounded-2 p-1 border">
                             <div class="flex-grow-1">
                                 <div class="fw-bold text-dark"><?php echo htmlspecialchars($item['title']); ?></div>
                                 <small class="text-muted">Артикул: <?php echo $item['product_id']; ?></small>
                             </div>
-                            <span class="badge bg-light text-dark border rounded-pill px-3 py-2">
+                            <!-- ИЗМЕНЕНО: убран класс border -->
+                            <span class="badge bg-white text-dark rounded-pill px-3 py-2">
                                 <?php echo number_format($item['price_at_purchase'], 0, '', ' '); ?> ₽
                             </span>
                         </a>
@@ -144,36 +145,50 @@ document.addEventListener("DOMContentLoaded", function() {
     const msgInput = document.getElementById("msgInput");
     const msgInputWrapper = msgInput.parentElement;
     
+    const ghost = document.createElement('textarea');
+    ghost.rows = 1;
+    ghost.style.position = 'absolute';
+    ghost.style.top = '-9999px';
+    ghost.style.left = '0';
+    ghost.style.visibility = 'hidden';
+    document.body.appendChild(ghost);
+    
     let ONE_LINE_HEIGHT, MAX_HEIGHT;
     const MAX_LINES = 6;
-    
-    // Переменная для управления таймером скроллбара
     let scrollbarTimeout;
 
     function calculateHeights() {
         const computedStyle = getComputedStyle(msgInput);
+        [
+            'width', 'font', 'lineHeight', 'letterSpacing', 
+            'paddingTop', 'paddingBottom', 'paddingLeft', 'paddingRight',
+            'borderWidth', 'boxSizing'
+        ].forEach(key => {
+            ghost.style[key] = computedStyle[key];
+        });
+
+        ghost.value = 'a';
+        ONE_LINE_HEIGHT = ghost.scrollHeight;
+        ghost.value = '';
+        
         const lineHeight = parseFloat(computedStyle.lineHeight);
         const paddingTop = parseFloat(computedStyle.paddingTop);
         const paddingBottom = parseFloat(computedStyle.paddingBottom);
-        ONE_LINE_HEIGHT = lineHeight + paddingTop + paddingBottom;
+        
         MAX_HEIGHT = (lineHeight * MAX_LINES) + paddingTop + paddingBottom;
+        
         msgInputWrapper.style.gridTemplateRows = ONE_LINE_HEIGHT + 'px';
     }
     calculateHeights();
 
     function autoResize() {
-        // 1. Немедленно скрываем скроллбар и очищаем таймер, чтобы избежать мигания
         clearTimeout(scrollbarTimeout);
         msgInput.style.overflowY = 'hidden';
 
-        // 2. КЛЮЧЕВОЙ ФИКС: Сбрасываем высоту textarea, чтобы она "обернулась" вокруг текста.
-        // Это позволяет правильно измерить scrollHeight при УДАЛЕНИИ строк.
-        msgInput.style.height = 'auto';
-        
-        let scrollHeight = msgInput.scrollHeight;
+        ghost.value = msgInput.value;
+        let scrollHeight = ghost.scrollHeight;
         let newHeight;
         
-        // 3. Вычисляем новую целевую высоту
         if (msgInput.value === '') {
             newHeight = ONE_LINE_HEIGHT;
             chatForm.classList.remove('is-expanded');
@@ -181,10 +196,9 @@ document.addEventListener("DOMContentLoaded", function() {
             newHeight = MAX_HEIGHT;
             chatForm.classList.add('is-expanded');
             
-            // 4. ФИКС МИГАНИЯ: Показываем скроллбар только ПОСЛЕ завершения анимации
             scrollbarTimeout = setTimeout(() => {
                 msgInput.style.overflowY = 'auto';
-            }, 200); // 200ms - столько же, сколько длится transition в CSS
+            }, 200);
         } else {
             newHeight = scrollHeight;
             if (newHeight > ONE_LINE_HEIGHT + 10) {
@@ -194,7 +208,6 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         }
         
-        // 5. Применяем новую высоту к анимируемому контейнеру
         msgInputWrapper.style.gridTemplateRows = newHeight + 'px';
     }
 
@@ -217,7 +230,6 @@ document.addEventListener("DOMContentLoaded", function() {
         formData.append('order_id', orderId);
         formData.append('message', text);
         
-        // СБРОС: просто очищаем поле и вызываем autoResize, чтобы он плавно все свернул
         msgInput.value = '';
         autoResize(); 
         msgInput.focus();
@@ -227,7 +239,6 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(data => { loadMessages(); });
     });
 
-    // ... (Ваша функция loadMessages без изменений) ...
     function loadMessages() {
         let formData = new FormData();
         formData.append('action', 'get_messages');
@@ -244,7 +255,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 data.messages.forEach(msg => {
                     let isMe = (msg.sender_role === 'user'); 
                     let bubbleClass = isMe ? 'message-me' : 'message-them';
-                    html += `<div class="message-bubble ${bubbleClass}">${msg.message.replace(/\n/g, '<br>')}<div class="msg-time">${time}</div></div>`;
+                    html += `<div class="message-bubble ${bubbleClass}">${msg.message.replace(/\n/g, '<br>')}<div class="msg-time">${msg.time}</div></div>`;
                 });
             }
             if (chatBox.innerHTML.replace(/\s/g,'') !== html.replace(/\s/g,'')) {
@@ -258,4 +269,4 @@ document.addEventListener("DOMContentLoaded", function() {
     setInterval(loadMessages, 2000);
 });
 </script>
-</div></body></html>
+</div></body></html>```

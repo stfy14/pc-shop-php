@@ -1,4 +1,4 @@
-body { font-family: sans-serif; padding: 20px; background: #f4f4f4; }
+/* body { font-family: sans-serif; padding: 20px; background: #f4f4f4; }
 .header { display: flex; justify-content: space-between; align-items: center; background: #333; color: #fff; padding: 10px 20px; }
 .header a { color: #fff; margin-left: 15px; text-decoration: none; }
 .filters { margin: 20px 0; }
@@ -8,4 +8,4 @@ body { font-family: sans-serif; padding: 20px; background: #f4f4f4; }
 .btn { background: #28a745; color: white; padding: 5px 10px; text-decoration: none; display: inline-block; margin-top: 10px; }
 .btn-del { background: #dc3545; }
 table { width: 100%; background: white; border-collapse: collapse; }
-th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+th, td { padding: 10px; border: 1px solid #ddd; text-align: left; } */

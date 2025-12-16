@@ -44,11 +44,29 @@ require_once 'header.php';
                     
                     <div class="mb-4">
                         <label class="form-label">Телефон</label>
-                        <input type="text" name="phone" class="form-control" required placeholder="+7 (999) 000-00-00">
+                        <!-- Добавили id="phone" и maxlength -->
+                        <input type="tel" name="phone" id="phone" class="form-control" required placeholder="+7-999-000-0000" maxlength="16">
+                        <div class="form-text text-muted">Формат: +x-xxx-xxx-xxxx</div>
                     </div>
 
                     <button type="submit" class="btn btn-success w-100 py-2 rounded-pill fs-5">Подтвердить заказ</button>
                 </form>
+
+                <!-- СКРИПТ МАСКИ ТЕЛЕФОНА -->
+                <script>
+                document.getElementById('phone').addEventListener('input', function (e) {
+                    let x = e.target.value.replace(/\D/g, '') // Удаляем всё, кроме цифр
+                        .match(/(\d{0,1})(\d{0,3})(\d{0,3})(\d{0,4})/); // Разбиваем на группы
+
+                    if (!x[1]) {
+                        e.target.value = '+'; // Если пусто, ставим плюс
+                        return;
+                    }
+
+                    // Собираем строку по шаблону +x-xxx-xxx-xxxx
+                    e.target.value = !x[2] ? '+' + x[1] : '+' + x[1] + '-' + x[2] + (x[3] ? '-' + x[3] : '') + (x[4] ? '-' + x[4] : '');
+                });
+                </script>
             </div>
         </div>
     </div>

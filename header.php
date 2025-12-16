@@ -52,8 +52,20 @@ if (!empty($ids_in_cart)) {
         .card-bottom { margin-top: auto; display: flex; justify-content: space-between; align-items: center; }
         .price-tag { font-size: 1.25rem; font-weight: 800; color: #212529; }
 
-        /* === ЧАТ === */
-        .chat-container { background: #fff; border-radius: 24px; overflow: hidden; display: flex; flex-direction: column; height: 600px; border: 1px solid #f0f0f0; box-shadow: 0 10px 40px rgba(0,0,0,0.04); }
+/* === ЧАТ (Для полноэкранного режима) === */
+        .chat-container { 
+            background: #fff; 
+            border-radius: 1rem; 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
+            
+            /* Важно: теперь он занимает 100% высоты родителя */
+            height: 100%; 
+            
+            border: none; 
+            box-shadow: 0 .125rem .25rem rgba(0,0,0,.075); 
+        }
         .chat-header { background: #fff; padding: 20px 25px; border-bottom: 1px solid #f5f5f5; font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; }
         .chat-body { flex-grow: 1; padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background-color: #f8f9fa; }
         .message-bubble { max-width: 80%; padding: 12px 18px; position: relative; font-size: 0.95rem; line-height: 1.5; box-shadow: 0 2px 5px rgba(0,0,0,0.02); word-wrap: break-word; }
@@ -62,13 +74,117 @@ if (!empty($ids_in_cart)) {
         .message-them { align-self: flex-start; background: white; color: #1f2937; border-radius: 20px 20px 20px 4px; border: 1px solid #eaeaea; }
         .message-them .msg-time { color: #9ca3af; font-size: 0.7rem; margin-top: 5px; margin-bottom: -3px; }
         .chat-footer { background: white; padding: 15px 20px; border-top: 1px solid #f0f0f0; }
-        .chat-input-group { background: #f1f3f5; border-radius: 30px; padding: 5px; display: flex; align-items: center; transition: background 0.2s; border: 1px solid transparent; }
-        .chat-input-group:focus-within { background: #fff; border-color: #3b82f6; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
-        .chat-input { background: transparent; border: none; padding: 12px 20px; resize: none; flex-grow: 1; outline: none; max-height: 100px; font-size: 0.95rem; }
-        .btn-send { width: 42px; height: 42px; border-radius: 50%; border: none; background: #3b82f6; color: white; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; margin-right: 2px; }
-        .btn-send:hover { background: #2563eb; transform: scale(1.05); }
-        .btn-send:active { transform: scale(0.95); }
-        .btn-send i { margin-left: -2px; margin-top: 2px; font-size: 1.1rem; }
+/* === КОНТЕЙНЕР === */
+.chat-input-group {
+    background: #fff;
+    border: 2px solid #eef2f6;
+    border-radius: 28px;
+    display: flex;
+    align-items: stretch; /* Растягивание */
+    padding: 4px;
+    min-height: 52px; /* 4px + 44px + 4px */
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+    overflow: hidden; /* Чтобы ничего не торчало */
+}
+
+.chat-input-group:focus-within {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* === WRAPPER ДЛЯ ПОЛЯ ВВОДА (ДЛЯ АНИМАЦИИ) === */
+.chat-input-wrapper {
+    flex-grow: 1; /* Занимает все доступное место */
+    display: grid; /* Включаем Grid-магию */
+    min-height: 44px; /* Стартовая высота */
+
+    /* ГЛАВНОЕ: Анимируем не высоту, а размер grid-дорожки. Это работает! */
+    transition: grid-template-rows 0.2s ease-out;
+
+    /* Устанавливаем начальный размер. JS будет его менять. */
+    grid-template-rows: 44px;
+}
+
+/* === ТЕКСТОВОЕ ПОЛЕ === */
+.chat-input {
+    grid-area: 1 / 1 / 2 / 2; /* Растягиваем на всю ячейку грида */
+    width: 100%;
+    
+    background: transparent;
+    border: none;
+    resize: none;
+    outline: none;
+    
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    line-height: 20px;
+    color: #333;
+    box-sizing: border-box;
+    margin: 0;
+
+    /* Скролл появляется внутри поля, а не у wrapper'а */
+    overflow-y: auto;
+}
+
+/* === КРАСИВЫЙ СКРОЛЛБАР (Webkit) === */
+/* Тонкая полоска */
+.chat-input::-webkit-scrollbar {
+    width: 6px; 
+}
+/* Фон скролла прозрачный */
+.chat-input::-webkit-scrollbar-track {
+    background: transparent; 
+    margin-top: 10px;    /* Отступы, чтобы не прилипал к краям */
+    margin-bottom: 10px;
+}
+/* Сама "пилюля" скролла */
+.chat-input::-webkit-scrollbar-thumb {
+    background-color: #d1d5db; /* Светло-серый, ненавязчивый */
+    border-radius: 20px;       /* Закругленный */
+    border: 2px solid transparent; /* Отступ от контента */
+    background-clip: content-box;
+}
+/* При наведении чуть темнее */
+.chat-input::-webkit-scrollbar-thumb:hover {
+    background-color: #9ca3af;
+}
+
+/* === КНОПКА ОТПРАВКИ === */
+.btn-send {
+    width: 48px;
+    height: auto; 
+    flex-shrink: 0;
+    
+    border-radius: 24px; /* Круг/Овал по умолчанию */
+    
+    border: none;
+    background: #ffc107;
+    color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-left: 4px;
+    
+    /* Анимация закругления должна совпадать со скоростью роста поля (0.2s) */
+    transition: background-color 0.2s, border-radius 0.2s ease-out;
+}
+
+/* Изменение углов при расширении */
+.chat-input-group.is-expanded .btn-send {
+    border-radius: 8px 24px 24px 8px; /* Сделал 8px для большей плавности */
+}
+
+.btn-send:hover {
+    background: #ffca2c;
+}
+
+.btn-send i {
+    font-size: 1.2rem;
+    margin-left: -2px;
+    margin-top: 2px;
+}
         
         /* === КОРЗИНА === */
         .cart-item { transition: background 0.2s; border-radius: 12px; position: relative; }

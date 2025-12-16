@@ -1,34 +1,28 @@
 <?php
 require_once 'db.php';
-// Проверка прав
 if (session_status() === PHP_SESSION_NONE) session_start();
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header("Location: index.php");
     exit;
 }
 
-// === ЛОГИКА ДЕЙСТВИЙ ===
-
-// 1. Удаление (в архив)
 if (isset($_GET['del'])) {
     $id = intval($_GET['del']);
     $conn->prepare("UPDATE products SET is_deleted = 1 WHERE id = ?")->execute([$id]);
-    header("Location: admin.php"); // Возврат на активные
+    header("Location: admin.php"); 
     exit;
 }
 
-// 2. Восстановление (из архива)
 if (isset($_GET['restore'])) {
     $id = intval($_GET['restore']);
     $conn->prepare("UPDATE products SET is_deleted = 0 WHERE id = ?")->execute([$id]);
-    header("Location: admin.php?tab=deleted"); // Возврат в архив
+    header("Location: admin.php?tab=deleted"); 
     exit;
 }
 
 require_once 'header.php';
 
-// Какую вкладку показываем?
-$tab = $_GET['tab'] ?? 'active'; // 'active' или 'deleted'
+$tab = $_GET['tab'] ?? 'active'; 
 $is_deleted = ($tab === 'deleted') ? 1 : 0;
 ?>
 
@@ -52,7 +46,6 @@ $is_deleted = ($tab === 'deleted') ? 1 : 0;
     </div>
 </div>
 
-<!-- ВКЛАДКИ -->
 <ul class="nav nav-pills mb-3">
   <li class="nav-item">
     <a class="nav-link rounded-pill px-4 <?php echo $tab === 'active' ? 'active' : 'bg-white text-dark border'; ?>" href="admin.php">
@@ -75,20 +68,18 @@ $is_deleted = ($tab === 'deleted') ? 1 : 0;
                     <th>Фото</th>
                     <th>Название</th>
                     <th>Цена</th>
-                    <th>Остаток</th> <!-- НОВОЕ -->
+                    <th>Остаток</th> 
                     <th>Категория</th>
                     <th class="text-end pe-4">Действия</th>
                 </tr>
             </thead>
             <tbody>
                 <?php
-                // Фильтруем по статусу is_deleted
                 $stmt = $conn->prepare("SELECT * FROM products WHERE is_deleted = ? ORDER BY id DESC");
                 $stmt->execute([$is_deleted]);
                 
                 if ($stmt->rowCount() > 0):
                     while ($row = $stmt->fetch()): 
-                        // Подсветка, если товара мало
                         $stockBadge = 'bg-success';
                         if ($row['quantity'] == 0) $stockBadge = 'bg-danger';
                         elseif ($row['quantity'] < 5) $stockBadge = 'bg-warning text-dark';
@@ -109,7 +100,6 @@ $is_deleted = ($tab === 'deleted') ? 1 : 0;
                     </td>
                     <td><?php echo number_format($row['price'], 0, '', ' '); ?> ₽</td>
                     
-                    <!-- КОЛИЧЕСТВО -->
                     <td>
                         <span class="badge rounded-pill <?php echo $stockBadge; ?>">
                             <?php echo $row['quantity']; ?> шт.
@@ -124,14 +114,12 @@ $is_deleted = ($tab === 'deleted') ? 1 : 0;
                         </a>
                         
                         <?php if ($tab === 'active'): ?>
-                            <!-- Кнопка В АРХИВ -->
                             <a href="admin.php?del=<?php echo $row['id']; ?>" 
                                class="btn btn-sm btn-outline-danger" 
                                onclick="return confirm('В архив?');" title="Удалить">
                                <i class="bi bi-trash"></i>
                             </a>
                         <?php else: ?>
-                            <!-- Кнопка ВОССТАНОВИТЬ -->
                             <a href="admin.php?restore=<?php echo $row['id']; ?>" 
                                class="btn btn-sm btn-success" 
                                title="Восстановить">

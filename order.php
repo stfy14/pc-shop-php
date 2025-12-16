@@ -29,8 +29,6 @@ $st = $statusMap[$order['status']] ?? [$order['status'], 'bg-secondary'];
 
 <div class="container full-height-container">
     <div class="row h-100">
-        
-        <!-- ЛЕВАЯ КОЛОНКА (СКРОЛЛ) -->
         <div class="col-lg-8 scrollable-column">
             <div class="d-flex align-items-center justify-content-between mb-4 mt-2">
                 <div class="d-flex align-items-center">
@@ -75,14 +73,12 @@ $st = $statusMap[$order['status']] ?? [$order['status'], 'bg-secondary'];
                     <h6 class="fw-bold mb-3">Состав заказа</h6>
                     <div class="d-flex flex-column gap-2">
                         <?php foreach($items as $item): ?>
-                        <!-- ИЗМЕНЕНО: Добавлен класс order-item-link -->
                         <a href="product.php?id=<?php echo $item['product_id']; ?>" class="d-flex align-items-center p-3 bg-light rounded-3 shadow-sm text-decoration-none order-item-link">
                             <img src="<?php echo $item['image'] ?: 'https://placehold.co/50'; ?>" width="50" height="50" style="object-fit: contain; mix-blend-mode: multiply;" class="me-3 bg-white rounded-2 p-1 border">
                             <div class="flex-grow-1">
                                 <div class="fw-bold text-dark"><?php echo htmlspecialchars($item['title']); ?></div>
                                 <small class="text-muted">Артикул: <?php echo $item['product_id']; ?></small>
                             </div>
-                            <!-- ИЗМЕНЕНО: убран класс border -->
                             <span class="badge bg-white text-dark rounded-pill px-3 py-2">
                                 <?php echo number_format($item['price_at_purchase'], 0, '', ' '); ?> ₽
                             </span>
@@ -111,7 +107,6 @@ $st = $statusMap[$order['status']] ?? [$order['status'], 'bg-secondary'];
             <div style="height: 20px;"></div>
         </div>
 
-        <!-- ПРАВАЯ КОЛОНКА (ЧАТ FIXED) -->
         <div class="col-lg-4 fixed-column pt-2">
             <div class="chat-container">
                 <div class="chat-header">

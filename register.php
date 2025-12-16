@@ -1,7 +1,6 @@
 <?php
 require_once 'db.php';
 
-// Если уже вошел - кидаем в профиль
 session_start();
 if (isset($_SESSION['user_id'])) {
     header("Location: profile.php");
@@ -18,17 +17,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($password !== $confirm) {
         $error = "Пароли не совпадают";
     } else {
-        // Проверка: занят ли логин?
         $stmt = $conn->prepare("SELECT id FROM users WHERE username = ?");
         $stmt->execute([$username]);
         if ($stmt->rowCount() > 0) {
             $error = "Этот логин уже занят";
         } else {
-            // Регистрируем (Хешируем пароль!)
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
             $stmt = $conn->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
             if ($stmt->execute([$username, $hashed_password])) {
-                // Сразу авторизуем
                 $_SESSION['user_id'] = $conn->lastInsertId();
                 $_SESSION['role'] = 'user';
                 $_SESSION['username'] = $username;

@@ -130,12 +130,11 @@ document.getElementById('categorySelector').addEventListener('change', function(
                 const div = document.createElement('div');
                 div.className = 'mb-3';
                 const label = document.createElement('label');
-                label.className = 'form-label text-muted small'; // ИЗМЕНЕНО
+                label.className = 'form-label text-muted small'; 
                 label.innerText = char.name;
                 const input = document.createElement('input');
                 input.type = 'text';
                 input.name = `characteristics[${char.id}]`;
-                // ИЗМЕНЕНО: Добавлены классы для соответствия дизайну
                 input.className = 'form-control form-control-lg bg-light border-0 rounded-3'; 
                 div.appendChild(label);
                 div.appendChild(input);

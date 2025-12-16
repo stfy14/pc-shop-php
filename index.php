@@ -3,11 +3,9 @@ require_once 'db.php';
 require_once 'header.php'; 
 ?>
 
-<!-- Фильтры категорий -->
 <div class="mb-4 text-center">
     <?php $cat = $_GET['cat'] ?? null; ?>
     
-    <!-- ИЗМЕНЕНО: btn-outline-primary на btn-light-primary -->
     <a href="index.php" class="btn rounded-pill px-4 m-1 <?php echo !$cat ? 'btn-primary' : 'btn-light-primary'; ?>">
        Все
     </a>
@@ -16,7 +14,6 @@ require_once 'header.php';
     $cats = $conn->query("SELECT * FROM categories");
     while($c = $cats->fetch()):
     ?>
-    <!-- ИЗМЕНЕНО: btn-outline-primary на btn-light-primary -->
     <a href="index.php?cat=<?php echo $c['code']; ?>" 
        class="btn rounded-pill px-4 m-1 <?php echo $cat == $c['code'] ? 'btn-primary' : 'btn-light-primary'; ?>">
        <?php echo $c['name']; ?>
@@ -44,7 +41,7 @@ require_once 'header.php';
 
     if ($stmt->rowCount() > 0):
         while ($row = $stmt->fetch()): 
-            $in_cart = in_array($row['id'], $ids_in_cart); // из header.php
+            $in_cart = in_array($row['id'], $ids_in_cart); 
             $is_out_of_stock = ($row['quantity'] <= 0);
     ?>
         <div class="col-sm-6 col-md-4 col-lg-3">
@@ -91,6 +88,6 @@ require_once 'header.php';
     ?>
 </div>
 
-</div> <!-- Конец container -->
+</div> 
 </body>
 </html>

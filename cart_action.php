@@ -1,5 +1,5 @@
 <?php
-require_once 'cart_core.php'; // Подключаем наше новое ядро
+require_once 'cart_core.php'; 
 
 $redirect = $_SERVER['HTTP_REFERER'] ?? 'index.php';
 

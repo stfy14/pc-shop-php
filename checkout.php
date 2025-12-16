@@ -1,23 +1,20 @@
 <?php
 require_once 'db.php';
-require_once 'cart_core.php'; // Чтобы проверить, не пустая ли корзина
+require_once 'cart_core.php'; 
 
 if (session_status() === PHP_SESSION_NONE) session_start();
 
-// 1. Проверка авторизации
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit;
 }
 
-// 2. Проверка корзины
 $cartIds = getCartIds();
 if (empty($cartIds)) {
     header("Location: index.php");
     exit;
 }
 
-// Считаем сумму для отображения
 $ids_string = implode(',', array_map('intval', $cartIds));
 $stmt = $conn->query("SELECT SUM(price) FROM products WHERE id IN ($ids_string)");
 $total = $stmt->fetchColumn();
@@ -27,7 +24,6 @@ require_once 'header.php';
 
 <div class="row justify-content-center mt-4">
     <div class="col-md-6">
-        <!-- ИЗМЕНЕНО: Полностью переработанная карточка -->
         <div class="card shadow-sm border-0 rounded-4">
             <div class="card-body p-4 p-lg-5">
                 <h2 class="fw-bold mb-3">Оформление заказа</h2>
@@ -57,7 +53,6 @@ require_once 'header.php';
                     </div>
                 </form>
 
-                <!-- СКРИПТ МАСКИ ТЕЛЕФОНА (обновлен под новый формат) -->
                 <script>
                 document.getElementById('phone').addEventListener('input', function (e) {
                     let value = e.target.value.replace(/\D/g, '');

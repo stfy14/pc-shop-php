@@ -17,20 +17,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute([$username]);
     $user = $stmt->fetch();
 
-    // Проверяем пароль через password_verify
     if ($user && password_verify($password, $user['password'])) {
     $_SESSION['user_id'] = $user['id'];
     $_SESSION['username'] = $user['username'];
     $_SESSION['role'] = $user['role'];
 
-    // === НАЧАЛО: МИГРАЦИЯ КОРЗИНЫ (COOKIE -> DB) ===
     require_once 'cart_core.php';
     
-    // 1. Берем товары из куки (пока мы еще считаемся "гостем" для функции getCartIds, это сработает, но лучше прочитать куку напрямую)
     $cookieCart = json_decode($_COOKIE['cart_items'] ?? '[]', true);
     
     if (is_array($cookieCart) && count($cookieCart) > 0) {
-        // 2. Добавляем их все в базу этому юзеру
         $sql = "INSERT IGNORE INTO cart (user_id, product_id) VALUES (?, ?)";
         $stmtInsert = $conn->prepare($sql);
         
@@ -38,10 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmtInsert->execute([$user['id'], $prodId]);
         }
         
-        // 3. Удаляем куку, чтобы не дублировать данные
         clearCookieCart();
     }
-    // === КОНЕЦ МИГРАЦИИ ===
 
     header("Location: profile.php");
     exit;

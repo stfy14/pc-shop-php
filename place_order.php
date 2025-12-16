@@ -28,27 +28,21 @@ try {
         $totalPrice += $p['price'];
     }
 
-    // Генерируем UUID
     $uuid = bin2hex(random_bytes(4)); 
     
-    // Создаем заказ
     $stmtOrder = $conn->prepare("INSERT INTO orders (user_id, uuid, total_price, address, phone) VALUES (?, ?, ?, ?, ?)");
     $stmtOrder->execute([$userId, $uuid, $totalPrice, $address, $phone]);
     $orderId = $conn->lastInsertId();
 
-    // Подготовка запросов
     $stmtItem = $conn->prepare("INSERT INTO order_items (order_id, product_id, price_at_purchase) VALUES (?, ?, ?)");
     $stmtUpdateQty = $conn->prepare("UPDATE products SET quantity = quantity - 1 WHERE id = ? AND quantity > 0");
 
     foreach ($products as $p) {
-        // Добавляем в order_items
         $stmtItem->execute([$orderId, $p['id'], $p['price']]);
         
-        // ВАЖНО: Уменьшаем количество на складе!
         $stmtUpdateQty->execute([$p['id']]);
     }
 
-    // Чистим корзину
     $conn->prepare("DELETE FROM cart WHERE user_id = ?")->execute([$userId]);
     setcookie('cart_items', '', time() - 3600, "/");
 

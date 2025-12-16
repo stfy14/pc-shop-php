@@ -34,7 +34,6 @@ $current_category_id = $_GET['cat_id'] ?? $all_categories[0]['id'] ?? null;
             <a href="admin.php" class="btn btn-outline-secondary rounded-pill">← Назад</a>
         </div>
 
-        <!-- ИЗМЕНЕНО: Заменен стандартный select на кастомный -->
         <div class="card border-0 shadow-sm rounded-4 mb-4">
             <div class="card-body p-3">
                 <form method="get" id="categoryFilterForm" class="d-flex align-items-center gap-3">
@@ -78,7 +77,6 @@ $current_category_id = $_GET['cat_id'] ?? $all_categories[0]['id'] ?? null;
                 <form method="post" action="admin_characteristics.php?cat_id=<?php echo $current_category_id; ?>" class="row g-3">
                     <input type="hidden" name="category_id" value="<?php echo $current_category_id; ?>">
                     <div class="col-md-9">
-                        <!-- ИЗМЕНЕНО: Добавлены классы для соответствия дизайну -->
                         <input type="text" name="name" class="form-control form-control-lg bg-light border-0 rounded-3" placeholder="Название (напр. Сенсор, DPI...)" required>
                     </div>
                     <div class="col-md-3 d-grid">
@@ -115,7 +113,6 @@ $current_category_id = $_GET['cat_id'] ?? $all_categories[0]['id'] ?? null;
     </div>
 </div>
 
-<!-- ИЗМЕНЕНО: Добавлен JS для отправки формы при выборе кастомного селекта -->
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const filterForm = document.getElementById('categoryFilterForm');

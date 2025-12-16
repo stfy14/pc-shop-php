@@ -2,7 +2,6 @@
 require_once 'db.php';
 session_start();
 
-// Ответ всегда в JSON
 header('Content-Type: application/json');
 
 if (!isset($_SESSION['user_id']) && !isset($_SESSION['role'])) {
@@ -13,8 +12,6 @@ if (!isset($_SESSION['user_id']) && !isset($_SESSION['role'])) {
 $action = $_POST['action'] ?? '';
 $orderId = intval($_POST['order_id'] ?? 0);
 
-// Проверка доступа к заказу (безопасность!)
-// Нужно убедиться, что заказ принадлежит юзеру или это админ
 $stmt = $conn->prepare("SELECT user_id FROM orders WHERE id = ?");
 $stmt->execute([$orderId]);
 $order = $stmt->fetch();
@@ -29,13 +26,11 @@ if ($_SESSION['role'] !== 'admin' && $_SESSION['user_id'] != $order['user_id']) 
     exit;
 }
 
-// === ПОЛУЧЕНИЕ СООБЩЕНИЙ ===
 if ($action === 'get_messages') {
     $stmt = $conn->prepare("SELECT * FROM order_messages WHERE order_id = ? ORDER BY created_at ASC");
     $stmt->execute([$orderId]);
     $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
-    // Форматируем дату красиво
     foreach ($messages as &$msg) {
         $msg['time'] = date('H:i', strtotime($msg['created_at']));
     }
@@ -44,7 +39,6 @@ if ($action === 'get_messages') {
     exit;
 }
 
-// === ОТПРАВКА СООБЩЕНИЯ ===
 if ($action === 'send_message') {
     $message = trim($_POST['message'] ?? '');
     if ($message) {

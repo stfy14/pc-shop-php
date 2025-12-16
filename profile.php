@@ -7,7 +7,6 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-// Синхронизация роли
 $stmt = $conn->prepare("SELECT role, username FROM users WHERE id = ?");
 $stmt->execute([$_SESSION['user_id']]);
 $user = $stmt->fetch();
@@ -17,7 +16,6 @@ $_SESSION['role'] = $user['role'];
 <div class="row justify-content-center mt-4 mb-5">
     <div class="col-lg-10">
         
-        <!-- КАРТОЧКА ПРОФИЛЯ -->
         <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
             <div class="card-body p-4 p-md-5 d-flex align-items-center flex-wrap gap-4">
                 <div class="bg-primary bg-gradient text-white rounded-circle d-flex align-items-center justify-content-center shadow" 
@@ -42,7 +40,6 @@ $_SESSION['role'] = $user['role'];
             </div>
         </div>
 
-        <!-- МОИ ЗАКАЗЫ -->
         <h4 class="fw-bold mb-3 ps-2">📦 История заказов</h4>
         <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
             <div class="table-responsive">

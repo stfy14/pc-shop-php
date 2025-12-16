@@ -27,7 +27,6 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') exit;
             </thead>
             <tbody>
                 <?php
-                // Получаем заказы + имя пользователя
                 $sql = "SELECT orders.*, users.username 
                         FROM orders 
                         JOIN users ON orders.user_id = users.id 
@@ -35,7 +34,6 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') exit;
                 $result = $conn->query($sql);
 
                 while($order = $result->fetch()):
-                    // Статус (HTML код баджа)
                     $statusMap = [
                         'new' => ['Новый', 'bg-primary'],
                         'processing' => ['В работе', 'bg-warning text-dark'],
@@ -45,7 +43,6 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') exit;
                     ];
                     $st = $statusMap[$order['status']] ?? [$order['status'], 'bg-secondary'];
                 ?>
-                <!-- Делаем строку кликабельной через JS или просто кнопку "Открыть" -->
                 <tr style="cursor: pointer;" onclick="window.location.href='admin_order_view.php?uid=<?php echo $order['uuid']; ?>'">
                     <td class="ps-4">
                         <span class="fw-bold">#<?php echo $order['id']; ?></span><br>
@@ -62,7 +59,6 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') exit;
                     <td>
                         <div class="small lh-sm">
                             <?php echo htmlspecialchars($order['phone']); ?><br>
-                            <!-- Используем класс text-truncate от Bootstrap вместо PHP функции -->
                             <span class="d-inline-block text-truncate text-muted" style="max-width: 200px; vertical-align: bottom;">
                                 <?php echo htmlspecialchars($order['address']); ?>
                             </span>

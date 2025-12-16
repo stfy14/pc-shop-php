@@ -30,11 +30,9 @@ if (isset($_GET['del'])) {
             <div class="card-body p-4">
                 <form method="post" class="row g-3">
                     <div class="col-md-5">
-                        <!-- ИЗМЕНЕНО: Добавлены классы для соответствия дизайну -->
                         <input type="text" name="name" class="form-control form-control-lg bg-light border-0 rounded-3" placeholder="Название (напр. Наушники)" required>
                     </div>
                     <div class="col-md-5">
-                        <!-- ИЗМЕНЕНО: Добавлены классы для соответствия дизайну -->
                         <input type="text" name="code" class="form-control form-control-lg bg-light border-0 rounded-3" placeholder="Код (lat) (напр. headphones)" required>
                     </div>
                     <div class="col-md-2 d-grid">

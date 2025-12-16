@@ -1,8 +1,6 @@
 <?php
-// Ядро корзины + Сессия
 require_once 'cart_core.php';
 
-// Логика корзины
 $cart_items = [];
 $total_price = 0;
 $ids_in_cart = getCartIds();
@@ -29,23 +27,19 @@ if (!empty($ids_in_cart)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PC Shop</title>
-    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     
     <style>
         body { background-color: #f4f6f9; font-family: system-ui, -apple-system, sans-serif; }
         
-        /* === КАРТОЧКИ ТОВАРОВ === */
         .card-custom {
             height: 100%; border: none; border-radius: 16px; background: white;
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
             transition: transform 0.2s, box-shadow 0.2s;
             display: flex; flex-direction: column; 
-            /* ИЗМЕНЕНО: Убрано свойство overflow: hidden, которое обрезало тень */
         }
         .card-custom:hover { transform: translateY(-5px); box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12); }
-        /* ИЗМЕНЕНО: Свойство overflow и радиус перенесены сюда, чтобы обрезать только картинку */
         .card-img-wrapper { 
             height: 220px; background: #fff; display: flex; align-items: center; justify-content: center; padding: 20px;
             overflow: hidden;
@@ -59,7 +53,6 @@ if (!empty($ids_in_cart)) {
         .card-bottom { margin-top: auto; display: flex; justify-content: space-between; align-items: center; }
         .price-tag { font-size: 1.25rem; font-weight: 800; color: #212529; }
 
-        /* === Стили для кнопок фильтров === */
         .btn-light-primary {
             color: #0d6efd;
             background-color: rgba(13, 110, 253, 0.1);
@@ -71,7 +64,6 @@ if (!empty($ids_in_cart)) {
             border-color: #0d6efd;
         }
         
-        /* === CUSTOM SELECT BOX === */
         .custom-select-wrapper { position: relative; }
         .custom-select-wrapper select { display: none; }
         .custom-select {
@@ -142,7 +134,6 @@ if (!empty($ids_in_cart)) {
         .custom-select-options::-webkit-scrollbar-thumb { background-color: #d1d5db; border-radius: 20px; border: 1px solid transparent; background-clip: content-box; }
         .custom-select-options::-webkit-scrollbar-thumb:hover { background-color: #9ca3af; }
 
-        /* === ЭФФЕКТ НАВЕДЕНИЯ НА ТОВАР В ЗАКАЗЕ === */
         .order-item-link {
             transition: background-color 0.2s ease, box-shadow 0.2s ease;
         }
@@ -151,7 +142,6 @@ if (!empty($ids_in_cart)) {
             box-shadow: 0 .125rem .25rem rgba(13, 110, 253, 0.25) !important;
         }
 
-        /* === ЧАТ === */
         .chat-container { 
             background: #fff; 
             border-radius: 1rem; 
@@ -231,7 +221,6 @@ if (!empty($ids_in_cart)) {
         .btn-send:hover { background: #ffca2c; }
         .btn-send i { font-size: 1.2rem; margin-left: -2px; margin-top: 2px; }
         
-        /* === КОРЗИНА === */
         .cart-item { transition: background 0.2s; border-radius: 12px; position: relative; }
         .cart-item:hover { background: #f8f9fa; }
         .cart-item-disabled { opacity: 0.6; background-color: #f8f9fa; }
@@ -240,7 +229,6 @@ if (!empty($ids_in_cart)) {
 </head>
 <body class="bg-light">
 
-<!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4 sticky-top">
   <div class="container">
     <a class="navbar-brand fw-bold" href="index.php">
@@ -253,7 +241,6 @@ if (!empty($ids_in_cart)) {
     
     <div class="collapse navbar-collapse" id="navbarNav">
         
-        <!-- ПОИСК -->
         <form class="d-flex mx-auto my-2 my-lg-0" action="index.php" method="get" style="width: 100%; max-width: 400px;">
             <div class="input-group">
                 <input class="form-control border-end-0 rounded-start-pill bg-light border-light" type="search" name="q" placeholder="Поиск товаров..." aria-label="Search" value="<?php echo htmlspecialchars($_GET['q'] ?? ''); ?>">
@@ -266,7 +253,6 @@ if (!empty($ids_in_cart)) {
         <div class="navbar-nav ms-auto gap-2 align-items-center">
             <a class="nav-link fw-medium" href="index.php">Каталог</a>
             
-            <!-- Кнопка Корзины -->
             <button class="btn btn-light position-relative rounded-pill px-3 fw-medium" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart">
                 <i class="bi bi-cart3"></i> Корзина
                 <?php if (count($cart_items) > 0): ?>
@@ -277,7 +263,6 @@ if (!empty($ids_in_cart)) {
                 <?php endif; ?>
             </button>
             
-            <!-- Авторизация -->
             <?php if (isset($_SESSION['user_id'])): ?>
                 <a class="btn btn-dark rounded-pill px-4" href="profile.php">
                     <i class="bi bi-person-fill"></i> Профиль
@@ -290,7 +275,6 @@ if (!empty($ids_in_cart)) {
   </div>
 </nav>
 
-<!-- КОРЗИНА OFFCANVAS (Добавлен overflow-hidden) -->
 <div class="offcanvas offcanvas-end rounded-start-4 border-0 overflow-hidden" tabindex="-1" id="offcanvasCart" style="width: 400px;">
   <div class="offcanvas-header">
     <h5 class="offcanvas-title fw-bold">🛒 Корзина</h5>
@@ -364,7 +348,6 @@ if (!empty($ids_in_cart)) {
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- СКРИПТ ДЛЯ КАСТОМНОГО СЕЛЕКТА -->
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const wrappers = document.querySelectorAll('.custom-select-wrapper');
@@ -393,7 +376,7 @@ document.addEventListener('DOMContentLoaded', () => {
             option.addEventListener('click', () => {
                 selectedDisplay.textContent = option.textContent.trim();
                 hiddenSelect.value = option.dataset.value;
-                hiddenSelect.dispatchEvent(new Event('change')); // Для совместимости
+                hiddenSelect.dispatchEvent(new Event('change')); 
                 options.forEach(opt => opt.classList.remove('is-selected'));
                 option.classList.add('is-selected');
                 wrapper.classList.remove('is-open');
@@ -407,7 +390,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
-<!-- СКРИПТ ДЛЯ ПРЕДПРОСМОТРА ИЗОБРАЖЕНИЙ -->
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const imageUploadInput = document.getElementById('imageUpload');
